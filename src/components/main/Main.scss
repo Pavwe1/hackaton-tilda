@@ -1,0 +1,16 @@
+.main {
+  &__block{
+
+    &--close,
+    &--settings {
+      font-size: 20px !important;
+    }
+
+    &:hover {
+      .main__block--close,
+      .main__block--settings {
+          display: block;
+      }
+    }
+  }
+}

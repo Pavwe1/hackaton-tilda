@@ -1,5 +1,4 @@
-import type { Block } from "../../App";
-
+import type { Block } from "@/types";
 interface PropertiesPanelProps {
   blocks: Block[];
   setBlocks: React.Dispatch<React.SetStateAction<Block[]>>;

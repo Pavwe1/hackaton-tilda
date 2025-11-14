@@ -1,5 +1,4 @@
 import { useState } from "react";
-import SidebarBlock from "../sidebar-block/SidebarBlock";
 import {
   Heading,
   Type,
@@ -10,6 +9,8 @@ import {
   ChevronRight,
   Square
 } from "lucide-react";
+
+import SidebarBlock from "@/components/sidebar-block/SidebarBlock";
 
 const data = {
   headers: {

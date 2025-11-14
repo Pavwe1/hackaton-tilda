@@ -1,9 +1,10 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { X, Settings } from "lucide-react";
 import { CSS } from "@dnd-kit/utilities";
-import type { Block } from "../../App";
 
-interface MainBlockProps {
+import type { Block } from "@/types";
+
+interface CanvasBlockProps {
   block: Block;
   selectedBlockId: string | null;
   handleRemove: Function;
@@ -11,7 +12,7 @@ interface MainBlockProps {
   darkMode: boolean;
 }
 
-export function MainBlock({ block, selectedBlockId, handleRemove, handleSettings, darkMode }: MainBlockProps) {
+export function CanvasBlock({ block, selectedBlockId, handleRemove, handleSettings, darkMode }: CanvasBlockProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
 
   const widthPx = block.width ? block.width * 80 + (block.width - 1) * 8 : 640;
@@ -39,7 +40,7 @@ export function MainBlock({ block, selectedBlockId, handleRemove, handleSettings
         fontWeight: block.fontWeight as any,
         opacity: block.opacity,
       }}
-      className={`main__block flex items-center justify-center relative hover:border-b-2 hover:border-t-2 border-dashed
+      className={`canvas__block flex items-center justify-center relative hover:border-b-2 hover:border-t-2 border-dashed
         ${darkMode ? "border-zinc-400" : "border-zinc-200"}
         ${selectedBlockId === block.id ? "border-b-2 border-t-2" : ""}`}
     >
@@ -52,7 +53,7 @@ export function MainBlock({ block, selectedBlockId, handleRemove, handleSettings
           e.stopPropagation();
           handleSettings(block.id);
         }}
-        className={`main__block--settings absolute top-2 left-2 text-gray-600 font-bold hover:text-gray-900
+        className={`canvas__block--settings absolute top-2 left-2 text-gray-600 font-bold hover:text-gray-900
           ${selectedBlockId === block.id ? "" : "hidden"}`}
       >
         <Settings className="w-5 h-5" />
@@ -63,7 +64,7 @@ export function MainBlock({ block, selectedBlockId, handleRemove, handleSettings
           e.stopPropagation();
           handleRemove(block.id);
         }}
-        className={`main__block--close absolute top-2 right-2 text-red-500 font-bold hover:text-red-700
+        className={`canvas__block--close absolute top-2 right-2 text-red-500 font-bold hover:text-red-700
           ${selectedBlockId === block.id ? "" : "hidden"}`}
       >
         <X className="w-5 h-5" />

@@ -1,13 +1,15 @@
-import "./Main.scss";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { Block } from "../../App";
-import { MainBlock } from "../main-block/MainBlock";
 
-interface MainProps {
+import { CanvasBlock } from "@/components/canvas-block/CanvasBlock";
+import "@/components/canvas/Canvas.scss";
+
+import type { Block } from "@/types";
+
+interface CanvasProps {
   blocks: Block[];
   setBlocks: React.Dispatch<React.SetStateAction<Block[]>>;
   selectedBlockId: string | null;
@@ -16,8 +18,8 @@ interface MainProps {
   darkMode: boolean;
 }
 
-export default function Main({ blocks, setBlocks, selectedBlockId, setSelectedBlockId, darkMode }: MainProps) {
-  const { setNodeRef } = useDroppable({ id: "main-drop-zone" });
+export default function Canvas({ blocks, setBlocks, selectedBlockId, setSelectedBlockId, darkMode }: CanvasProps) {
+  const { setNodeRef } = useDroppable({ id: "canvas-drop-zone" });
 
   const handleRemove = (id: string) => {
     setBlocks((prev) => prev.filter((b) => b.id !== id));
@@ -29,16 +31,16 @@ export default function Main({ blocks, setBlocks, selectedBlockId, setSelectedBl
   };
 
   return (
-    <main ref={setNodeRef} className={`main flex-1 overflow-auto hide-scrollbar ${
-      darkMode ? "bg-zinc-700 zinc-200" : "bg-zinc-200 text-gray-900"
-    }`}>
+    <main ref={setNodeRef} className={`canvas flex-1 overflow-auto hide-scrollbar
+      ${darkMode ? "bg-zinc-700 zinc-200" : "bg-zinc-200 text-zinc-800"}
+    `}>
       <SortableContext
         items={blocks.map((b) => b.id)}
         strategy={verticalListSortingStrategy}
       >
         <div className="grid grid-cols-12 auto-rows-[80px] gap-y-2">
           {blocks.map((block) => (
-            <MainBlock
+            <CanvasBlock
               key={block.id}
               block={block}
               selectedBlockId={selectedBlockId}

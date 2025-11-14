@@ -1,4 +1,4 @@
-.main {
+.canvas {
   &__block{
 
     &--close,
@@ -7,8 +7,8 @@
     }
 
     &:hover {
-      .main__block--close,
-      .main__block--settings {
+      .canvas__block--close,
+      .canvas__block--settings {
           display: block;
       }
     }

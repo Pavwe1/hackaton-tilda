@@ -99,16 +99,6 @@ export default function RegisterPage({ darkMode, setDarkMode, setIsLoggedIn }: R
             Создать аккаунт
           </button>
 
-          <button
-            type="button"
-            onClick={() => setDarkMode(!darkMode)}
-            className={`w-full p-2 text-sm border rounded-lg
-              ${darkMode ? "border-zinc-200" : "border-zinc-800"}
-            `}
-          >
-            {darkMode ? "Светлая тема" : "Тёмная тема"}
-          </button>
-
           {error && (
             <div className="text-red-500 text-center">{error}</div>
           )}

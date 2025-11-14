@@ -39,7 +39,7 @@ export default function LoginPage({ darkMode, setDarkMode, setIsLoggedIn }: Logi
       <header className={`h-12 border-b border-zinc-300 flex items-center justify-between px-4 shadow-sm ${darkMode ? "bg-zinc-800 text-zinc-200" : "bg-zinc-200 text-gray-800"}`}>
         <h1 className="flex items-center gap-2 font-semibold text-sm tracking-wide">
           <Baby size={20} className="text-red-400" />
-          МеняВДетствеРоняли entertaiment
+          Posusecam inc.
         </h1>
         <button
             onClick={() => setDarkMode(!darkMode)}

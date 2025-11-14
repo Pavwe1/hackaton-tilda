@@ -79,16 +79,6 @@ export default function PropertiesPanel({ blocks, setBlocks, selectedBlockId, da
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm">Текст блока</label>
-        <input
-          type="text"
-          value={block.text}
-          onChange={(e) => handleChange("text", e.target.value)}
-          className={inputClass}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
         <label className="text-sm">Цвет текста</label>
         <input
           type="color"

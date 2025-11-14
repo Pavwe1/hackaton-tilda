@@ -21,24 +21,27 @@ export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: Edi
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
-    const type = event.active.data.current?.type;
+    const block = event.active.data.current;
+    console.log(block)
     const existing = blocks.find((b) => b.id === event.active.id);
     if (existing) setActiveDrag(existing);
-    else if (type) setActiveDrag({ id: "preview", type });
+    else if (block) setActiveDrag({ id: "preview", name: block.name, html: block.html });
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    const activeType = active.data.current?.type;
-    const isFromSidebar = activeType && !blocks.find((b) => b.id === active.id);
+    const activeBlock = active.data.current;
+    const isFromSidebar = activeBlock?.name && !blocks.find((b) => b.id === active.id);
+
+    console.log(activeDrag)
 
     if (isFromSidebar) {
       const newBlock: Block = {
         id: crypto.randomUUID(),
-        type: activeType,
-        text: activeType,
+        name: activeBlock?.name,
+        html: activeBlock?.html,
         width: 8,
         height: 3,
         bgColor: "#f0f0f0",
@@ -94,7 +97,7 @@ export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: Edi
             <div className={`p-2 border rounded-md flex items-center justify-center gap-2 cursor-grabbing text-sm transition
               ${darkMode ? "bg-zinc-700 hover:bg-zinc-400 text-zinc-200" : "bg-white hover:bg-zinc-200 text-gray-700"}
             `}>
-              {activeDrag.type}
+              {activeDrag.name}
             </div>
           ) : activeDrag ? (
             <div
@@ -110,7 +113,7 @@ export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: Edi
                 opacity: activeDrag.opacity,
               }}
             >
-              {activeDrag.text}
+              {activeDrag.name}
             </div>
           ) : null}
         </DragOverlay>

@@ -24,7 +24,7 @@ function Header({ darkMode, setDarkMode, setIsLoggedIn }: HeaderProps) {
         >
           {darkMode ? <Sun size={16} /> : <Moon size={16} />}
         </button>
-        МеняВДетствеРоняли entertaiment
+        Posusecam inc.
       </h1>
       <div className="flex items-center gap-2">
         <button

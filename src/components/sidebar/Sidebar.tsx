@@ -1,93 +1,37 @@
 import { useState } from "react";
 import {
-  Heading,
-  Type,
-  SquareMousePointer,
-  Image,
-  Video,
   ChevronDown,
-  ChevronRight,
-  Square
+  ChevronRight
 } from "lucide-react";
 
 import SidebarBlock from "@/components/sidebar-block/SidebarBlock";
 
-const data = {
-  headers: {
+const data = [
+  {
+    type: "headers",
     name: "Заголовок",
-    icon: Heading,
     blocks: [
-      { name: "Заголовок-1" },
-      { name: "Заголовок-2" },
-      { name: "Заголовок-3" },
-      { name: "Заголовок-4" }
-    ]
+      { name: "Заголовок 1", html: "<div class='flex flex-col gap-10 items-center'><h1 class='text-red-500 font-bold'>Заголовок 1</h1><h2>Подзаголовок</h2><p font-light>Очень инересный текст</p></div>" },
+      { name: "Заголовок 2", html: "<h2>Заголовок 2</h2>" },
+      { name: "Заголовок 3", html: "<h3>Заголовок 3</h3>" },
+    ],
   },
-  texts: {
-    name: "Текстовый блок",
-    icon: Type,
-    blocks: [
-      { name: "Текст-1" },
-      { name: "Текст-2" },
-      { name: "Текст-3" },
-      { name: "Текст-4" }
-    ]
-  },
-  buttons: {
+  {
+    type: "buttons",
     name: "Кнопка",
-    icon: SquareMousePointer,
     blocks: [
-      { name: "Кнопка-1" },
-      { name: "Кнопка-2" },
-      { name: "Кнопка-3" },
-      { name: "Кнопка-4" }
-    ]
+      { name: "Кнопка 1", html: "<button>Нажми меня</button>" },
+      { name: "Кнопка 2", html: "<button>Ещё кнопка</button>" },
+    ],
   },
-  images: {
-    name: "Изображение",
-    icon: Image,
-    blocks: [
-      { name: "Изображение-1" },
-      { name: "Изображение-2" },
-      { name: "Изображение-3" },
-      { name: "Изображение-4" }
-    ]
-  },
-  videos: {
-    name: "Видео",
-    icon: Video,
-    blocks: [
-      { name: "Видео-1" },
-      { name: "Видео-2" },
-      { name: "Видео-3" },
-      { name: "Видео-4" }
-    ]
-  },
-  footers: {
-    name: "Подвал",
-    icon: Square,
-    blocks: [
-      { name: "Подвал-1" },
-      { name: "Подвал-2" },
-      { name: "Подвал-3" },
-      { name: "Подвал-4" }
-    ]
-  },
-};
+];
 
 interface SidebarProps {
   darkMode: boolean;
 }
 
 export default function Sidebar({ darkMode }: SidebarProps) {
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    headers: true,
-    texts: false,
-    buttons: false,
-    images: false,
-    videos: false,
-    footers: false,
-  });
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -101,8 +45,8 @@ export default function Sidebar({ darkMode }: SidebarProps) {
         Список блоков
       </h2>
 
-      {Object.entries(data).map(([key, category]) => {
-        const Icon = category.icon || Square;
+      {data.map((category) => {
+        const key = category.type;
         const isOpen = openSections[key];
         return (
           <div key={key} className={`mb-3 border-b pb-2
@@ -115,7 +59,6 @@ export default function Sidebar({ darkMode }: SidebarProps) {
               `}
             >
               <div className="flex items-center gap-2">
-                <Icon className="w-4 h-4" />
                 <span className="font-medium text-sm">{category.name}</span>
               </div>
               {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -124,7 +67,7 @@ export default function Sidebar({ darkMode }: SidebarProps) {
             {isOpen && (
               <ul className="mt-2 space-y-1 pl-2">
                 {category.blocks.map((block) => (
-                  <SidebarBlock key={block.name} name={block.name} darkMode={darkMode} />
+                  <SidebarBlock key={block.name} block={block} darkMode={darkMode} />
                 ))}
               </ul>
             )}

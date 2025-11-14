@@ -44,9 +44,12 @@ export function CanvasBlock({ block, selectedBlockId, handleRemove, handleSettin
         ${darkMode ? "border-zinc-400" : "border-zinc-200"}
         ${selectedBlockId === block.id ? "border-b-2 border-t-2" : ""}`}
     >
-      <div {...attributes} {...listeners} className="w-full h-full flex items-center justify-center cursor-grab">
-        {block.text}
-      </div>
+      <div
+        {...attributes}
+        {...listeners}
+        className="w-full h-full flex items-center justify-center cursor-grab"
+        dangerouslySetInnerHTML={{ __html: block.html ?? "" }}
+      />
 
       <button
         onClick={(e) => {

@@ -1,7 +1,7 @@
 export type Block = {
   id: string;
-  type: string;
-  text?: string;
+  name: string;
+  html: string;
   width?: number;
   height?: number;
   bgColor?: string;

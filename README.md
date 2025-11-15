@@ -3,17 +3,12 @@
 1) Скачать nodeJS
 2) делаем npm i --global yarn
 3) Делаем npm run dev
-4) гоутоуво
+4) Регистрируемся
+5) гоутоуво
 
-Тестовый пользователь:
-test:123456
+Так как миграции на бэке не успели сделать(сори), нужно еще в контейнере с postgres добавить блоки
 
-Так как миграции на бэке не успели сделать(сори), нужно еще сделать в контейнере с postgres вот это(на password_hash не обращайте внимание, если создавать пользователя через POST запрос, то он форматирует норм пароль в этот хэш):
-```
-INSERT INTO users (name, username, password_hash) VALUES ('test1', 'test1', '$2a$10$GYEvx/xw4PSycRMQWf3VMeQRP6GpTDN8PAuDpTv6wSK6oGS9PA876');
-```
-
-И вот это:
+Вот таким запросом:
 ```
 INSERT INTO tags (id, name, created_at, updated_at, deleted_at) VALUES
   (gen_random_uuid(), 'Hero', now(), now(), NULL),

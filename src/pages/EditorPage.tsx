@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
+import type { DragStartEvent, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import Header from "@/components/header/Header";
@@ -7,12 +8,25 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import Main from "@/components/canvas/Canvas";
 import PropertiesPanel from "@/components/properties-panel/PropertiesPanel";
 
-import type { Block, DragEndEvent, DragStartEvent } from "@/types";
+export type Block = {
+  id: string;
+  type: string;
+  template?: string;
+  schema?: Record<string, any>;
+  text?: string;
+  width?: number;
+  height?: number;
+  [key: string]: any;
+};
 
 interface EditorPageProps {
-  darkMode: boolean,
-  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>,
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
+  darkMode: boolean;
+  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export function renderTemplate(template: string, schema: Record<string, any>) {
+  return template.replace(/%%(.*?)%%/g, (_, key) => schema[key] ?? "");
 }
 
 export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: EditorPageProps) {
@@ -21,35 +35,41 @@ export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: Edi
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
-    const block = event.active.data.current;
-    console.log(block)
-    const existing = blocks.find((b) => b.id === event.active.id);
-    if (existing) setActiveDrag(existing);
-    else if (block) setActiveDrag({ id: "preview", name: block.name, html: block.html });
+    const activeData = event.active.data?.current;
+    if (!activeData) return;
+
+    const { type, template, schema } = activeData;
+
+    setActiveDrag({
+      id: "preview",
+      type,
+      template,
+      schema,
+      text: schema?.content || type,
+      width: schema?.width || 8,
+      height: schema?.height || 3,
+      ...schema,
+    });
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
+    const activeData = active.data?.current;
+    if (!activeData) return;
 
-    const activeBlock = active.data.current;
-    const isFromSidebar = activeBlock?.name && !blocks.find((b) => b.id === active.id);
-
-    console.log(activeDrag)
+    const isFromSidebar = activeData.template && !blocks.find((b) => b.id === active.id);
 
     if (isFromSidebar) {
       const newBlock: Block = {
         id: crypto.randomUUID(),
-        name: activeBlock?.name,
-        html: activeBlock?.html,
-        width: 8,
-        height: 3,
-        bgColor: "#f0f0f0",
-        fontSize: 16,
-        fontFamily: "sans-serif",
-        fontWeight: "normal",
-        color: "#000000",
-        opacity: 1,
+        type: activeData.type,
+        template: activeData.template,
+        schema: activeData.schema,
+        text: activeData.schema?.content || activeData.type,
+        width: activeData.schema?.width || 8,
+        height: activeData.schema?.height || 3,
+        ...activeData.schema,
       };
 
       const overIndex = blocks.findIndex((b) => b.id === over.id);
@@ -66,7 +86,6 @@ export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: Edi
     const oldIndex = blocks.findIndex((b) => b.id === active.id);
     const newIndex = blocks.findIndex((b) => b.id === over.id);
     if (oldIndex !== newIndex) setBlocks((items) => arrayMove(items, oldIndex, newIndex));
-
     setActiveDrag(null);
   };
 
@@ -83,6 +102,7 @@ export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: Edi
             setSelectedBlockId={setSelectedBlockId}
             activeDrag={activeDrag}
             darkMode={darkMode}
+            renderTemplate={renderTemplate}
           />
           <PropertiesPanel
             blocks={blocks}
@@ -93,29 +113,12 @@ export default function EditorPage({ darkMode, setDarkMode, setIsLoggedIn }: Edi
         </div>
 
         <DragOverlay>
-          {activeDrag && activeDrag.id === "preview" ? (
-            <div className={`p-2 border rounded-md flex items-center justify-center gap-2 cursor-grabbing text-sm transition
-              ${darkMode ? "bg-zinc-700 hover:bg-zinc-400 text-zinc-200" : "bg-white hover:bg-zinc-200 text-gray-700"}
-            `}>
-              {activeDrag.name}
+          {activeDrag && activeDrag.id === "preview" && (
+            <div className={`p-2 border rounded-md flex items-center justify-center cursor-grabbing text-sm transition
+              ${darkMode ? "bg-zinc-700 hover:bg-zinc-400 text-zinc-200" : "bg-white hover:bg-zinc-200 text-gray-700"}`}>
+              {activeDrag.text}
             </div>
-          ) : activeDrag ? (
-            <div
-              className="p-3 border-2 border-dashed rounded-md shadow flex items-center justify-center cursor-grabbing"
-              style={{
-                width: activeDrag.width ? activeDrag.width * 80 + (activeDrag.width - 1) * 8 : 640,
-                height: activeDrag.height ? activeDrag.height * 80 + (activeDrag.height - 1) * 8 : 240,
-                backgroundColor: activeDrag.bgColor,
-                color: activeDrag.color,
-                fontSize: activeDrag.fontSize,
-                fontFamily: activeDrag.fontFamily,
-                fontWeight: activeDrag.fontWeight,
-                opacity: activeDrag.opacity,
-              }}
-            >
-              {activeDrag.name}
-            </div>
-          ) : null}
+          )}
         </DragOverlay>
       </div>
     </DndContext>

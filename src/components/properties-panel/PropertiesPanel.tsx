@@ -1,4 +1,5 @@
 import type { Block } from "@/types";
+
 interface PropertiesPanelProps {
   blocks: Block[];
   setBlocks: React.Dispatch<React.SetStateAction<Block[]>>;
@@ -11,20 +12,18 @@ export default function PropertiesPanel({ blocks, setBlocks, selectedBlockId, da
 
   if (!block) {
     return (
-      <aside className={`w-64 border-l border-zinc-300 h-full p-4 shadow-panel ${
-        darkMode ? "bg-zinc-900 text-white" : "bg-zinc-100 text-gray-700"
+      <aside className={`w-64 border-l h-full p-4 shadow-panel ${
+        darkMode ? "bg-zinc-900 text-white border-zinc-700" : "bg-zinc-100 text-gray-700 border-gray-300"
       }`}>
-        <h2 className="font-semibold mb-3 text-sm uppercase tracking-wide">
-          Свойства
-        </h2>
-        <p className="text-sm text-gray-500">Выбери блок для редактирования</p>
+        <h2 className="font-semibold mb-3 text-sm uppercase tracking-wide">Свойства</h2>
+        <p className="text-sm text-gray-500">Выберите блок для редактирования</p>
       </aside>
     );
   }
 
-  const handleChange = (field: keyof Block, value: any) => {
-    setBlocks((prev) =>
-      prev.map((b) => (b.id === block.id ? { ...b, [field]: value } : b))
+  const updateBlock = (field: keyof Block, value: any) => {
+    setBlocks(prev =>
+      prev.map(b => b.id === block.id ? { ...b, [field]: value } : b)
     );
   };
 
@@ -37,85 +36,86 @@ export default function PropertiesPanel({ blocks, setBlocks, selectedBlockId, da
   }`;
 
   return (
-    <aside className={`w-64 border-l border-zinc-300 h-full p-4 shadow-panel flex flex-col gap-4 overflow-auto hide-scrollbar
-      ${darkMode ? "bg-zinc-900 text-zinc-200" : "bg-grayBg text-gray-700"}
-    `}>
-      <h2 className="font-semibold mb-3 text-sm uppercase tracking-wide">
-        Свойства блока
-      </h2>
+    <aside className={`w-64 border-l h-full p-4 shadow-panel flex flex-col gap-4 overflow-auto hide-scrollbar ${
+      darkMode ? "bg-zinc-900 text-zinc-200" : "bg-gray-100 text-gray-700"
+    }`}>
+      <h2 className="font-semibold mb-3 text-sm uppercase tracking-wide">Свойства блока</h2>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Ширина (колонки)</label>
-        <input
-          type="number"
-          min={1}
-          max={12}
-          value={block.width}
-          onChange={(e) => handleChange("width", Number(e.target.value))}
-          className={inputClass}
-        />
+      {/* Высота */}
+      <div className="flex items-center gap-2">
+        <label className="text-sm flex-1">Высота (строки)</label>
+        <button className="p-1 bg-gray-200 rounded" onClick={() => updateBlock("height", Math.max(1, (block.height || 1) - 1))}>-</button>
+        <span className="w-8 text-center">{block.height}</span>
+        <button className="p-1 bg-gray-200 rounded" onClick={() => updateBlock("height", Math.min(12, (block.height || 1) + 1))}>+</button>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Высота (строки)</label>
-        <input
-          type="number"
-          min={1}
-          max={6}
-          value={block.height}
-          onChange={(e) => handleChange("height", Number(e.target.value))}
-          className={inputClass}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
+      {/* Цвет фона */}
+      <div className="flex flex-col gap-1">
         <label className="text-sm">Цвет фона</label>
         <input
           type="color"
-          value={block.bgColor}
-          onChange={(e) => handleChange("bgColor", e.target.value)}
+          value={block.bgColor || "#ffffff"}
+          onChange={(e) => updateBlock("bgColor", e.target.value)}
           className={`w-full h-8 p-1 border rounded-md cursor-pointer ${darkMode ? "border-zinc-600 bg-zinc-700" : "border-gray-300 bg-white"}`}
         />
       </div>
 
-      <div className="flex flex-col gap-2">
+      {/* Цвет текста */}
+      <div className="flex flex-col gap-1">
         <label className="text-sm">Цвет текста</label>
         <input
           type="color"
-          value={block.color}
-          onChange={(e) => handleChange("color", e.target.value)}
+          value={block.color || "#000000"}
+          onChange={(e) => updateBlock("color", e.target.value)}
           className={`w-full h-8 p-1 border rounded-md cursor-pointer ${darkMode ? "border-zinc-600 bg-zinc-700" : "border-gray-300 bg-white"}`}
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Размер шрифта (px)</label>
+      {/* Текст блока */}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm">Текст блока</label>
         <input
-          type="number"
-          value={block.fontSize}
-          onChange={(e) => handleChange("fontSize", Number(e.target.value))}
+          type="text"
+          value={block.text || ""}
+          onChange={(e) => updateBlock("text", e.target.value)}
           className={inputClass}
         />
       </div>
 
-      <div className="flex flex-col gap-2">
+      {/* Размер шрифта */}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm">Размер шрифта (px)</label>
+        <input
+          type="number"
+          value={block.fontSize || 16}
+          onChange={(e) => updateBlock("fontSize", Number(e.target.value))}
+          className={inputClass}
+        />
+      </div>
+
+      {/* Шрифт */}
+      <div className="flex flex-col gap-1">
         <label className="text-sm">Шрифт</label>
         <select
-          value={block.fontFamily}
-          onChange={(e) => handleChange("fontFamily", e.target.value)}
+          value={block.fontFamily || "sans-serif"}
+          onChange={(e) => updateBlock("fontFamily", e.target.value)}
           className={selectClass}
         >
           <option value="sans-serif">Sans</option>
           <option value="serif">Serif</option>
           <option value="monospace">Monospace</option>
+          <option value="cursive">Cursive</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="system-ui">System UI</option>
         </select>
       </div>
 
-      <div className="flex flex-col gap-2">
+      {/* Толщина шрифта */}
+      <div className="flex flex-col gap-1">
         <label className="text-sm">Толщина шрифта</label>
         <select
-          value={block.fontWeight}
-          onChange={(e) => handleChange("fontWeight", e.target.value)}
+          value={block.fontWeight || "normal"}
+          onChange={(e) => updateBlock("fontWeight", e.target.value)}
           className={selectClass}
         >
           <option value="normal">Normal</option>
@@ -132,18 +132,128 @@ export default function PropertiesPanel({ blocks, setBlocks, selectedBlockId, da
         </select>
       </div>
 
-      <div className="flex flex-col gap-2">
+      {/* Прозрачность */}
+      <div className="flex flex-col gap-1">
         <label className="text-sm">Прозрачность</label>
         <input
           type="number"
           min={0}
           max={1}
           step={0.05}
-          value={block.opacity}
-          onChange={(e) => handleChange("opacity", Number(e.target.value))}
+          value={block.opacity ?? 1}
+          onChange={(e) => updateBlock("opacity", Number(e.target.value))}
           className={inputClass}
         />
       </div>
+
+      {/* Паддинг */}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm">Отступы (padding)</label>
+        <input
+          type="text"
+          value={block.padding || "0.5rem"}
+          onChange={(e) => updateBlock("padding", e.target.value)}
+          className={inputClass}
+        />
+      </div>
+
+      {/* Новые поля для колонок */}
+      {block.type === "column" && block.schema && (
+        <>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Ширина блока</label>
+            <input
+              type="number"
+              value={block.schema.width || 800}
+              onChange={(e) => updateBlock("schema", { ...block.schema, width: Number(e.target.value) })}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Высота блока</label>
+            <input
+              type="number"
+              value={block.schema.height || 300}
+              onChange={(e) => updateBlock("schema", { ...block.schema, height: Number(e.target.value) })}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Gap между колонками</label>
+            <input
+              type="number"
+              value={block.schema.gap || 20}
+              onChange={(e) => updateBlock("schema", { ...block.schema, gap: Number(e.target.value) })}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Фон колонки 1</label>
+            <input
+              type="color"
+              value={block.schema.col1Bg || "#f0f0f0"}
+              onChange={(e) => updateBlock("schema", { ...block.schema, col1Bg: e.target.value })}
+              className={`w-full h-8 p-1 border rounded-md cursor-pointer ${darkMode ? "border-zinc-600 bg-zinc-700" : "border-gray-300 bg-white"}`}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Фон колонки 2</label>
+            <input
+              type="color"
+              value={block.schema.col2Bg || "#e0e0e0"}
+              onChange={(e) => updateBlock("schema", { ...block.schema, col2Bg: e.target.value })}
+              className={`w-full h-8 p-1 border rounded-md cursor-pointer ${darkMode ? "border-zinc-600 bg-zinc-700" : "border-gray-300 bg-white"}`}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Контент колонки 1</label>
+            <input
+              type="text"
+              value={block.schema.col1Content || ""}
+              onChange={(e) => updateBlock("schema", { ...block.schema, col1Content: e.target.value })}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Контент колонки 2</label>
+            <input
+              type="text"
+              value={block.schema.col2Content || ""}
+              onChange={(e) => updateBlock("schema", { ...block.schema, col2Content: e.target.value })}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Паддинг колонок</label>
+            <input
+              type="text"
+              value={block.schema.colPadding || "10px"}
+              onChange={(e) => updateBlock("schema", { ...block.schema, colPadding: e.target.value })}
+              className={inputClass}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Новое поле для текста */}
+      {block.type === "text" && (
+        <div className="flex flex-col gap-1">
+          <label className="text-sm">Расстояние между буквами (letter-spacing)</label>
+          <input
+            type="text"
+            value={block.letterSpacing || "normal"}
+            onChange={(e) => updateBlock("letterSpacing", e.target.value)}
+            className={inputClass}
+          />
+        </div>
+      )}
     </aside>
   );
 }
